@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Box, Button, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Button, Grid, GridItem, VStack, Heading, Flex, IconButton } from '@chakra-ui/react';
+import { FaSun, FaMoon } from 'react-icons/fa';
+import { useColorMode } from '@chakra-ui/color-mode';
 
 const Index = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
   const [aiMode, setAiMode] = useState(false);
   const winner = calculateWinner(board);
+  const { colorMode, toggleColorMode } = useColorMode();
+  const bgColor = colorMode === 'light' ? 'gray.100' : 'gray.700';
+  const color = colorMode === 'light' ? 'black' : 'white';
+  const SwitchIcon = colorMode === 'light' ? FaMoon : FaSun;
 
   useEffect(() => {
     if (aiMode && !xIsNext && !winner) {
@@ -26,19 +32,7 @@ const Index = () => {
     boardCopy[i] = xIsNext ? 'X' : 'O';
     setBoard(boardCopy);
     setXIsNext(!xIsNext);
-    if (aiMode && !xIsNext) {
-      const bestMove = calculateBestMove(boardCopy);
-      boardCopy[bestMove] = 'O';
-      setBoard(boardCopy);
-      setXIsNext(true);
-    }
   };
-
-  const renderSquare = (i) => (
-    <Button onClick={() => handleClick(i)} size="lg" p={4} colorScheme="gray" isFullWidth>
-      {board[i]}
-    </Button>
-  );
 
   const resetGame = () => {
     setBoard(Array(9).fill(null));
@@ -52,7 +46,6 @@ const Index = () => {
       [0, 4, 8], [2, 4, 6]             // Diagonals
     ];
 
-    // Check if AI can win in the next move
     for (let i = 0; i < winPatterns.length; i++) {
       const [a, b, c] = winPatterns[i];
       if (board[a] === 'O' && board[b] === 'O' && !board[c]) return c;
@@ -60,7 +53,6 @@ const Index = () => {
       if (!board[a] && board[b] === 'O' && board[c] === 'O') return a;
     }
 
-    // Block opponent's winning move
     for (let i = 0; i < winPatterns.length; i++) {
       const [a, b, c] = winPatterns[i];
       if (board[a] === 'X' && board[b] === 'X' && !board[c]) return c;
@@ -68,33 +60,37 @@ const Index = () => {
       if (!board[a] && board[b] === 'X' && board[c] === 'X') return a;
     }
 
-    // Take the center if it's free
     if (!board[4]) return 4;
 
-    // Take any corner if available
     const corners = [0, 2, 6, 8];
     for (let i = 0; i < corners.length; i++) {
       if (!board[corners[i]]) return corners[i];
     }
 
-    // Take any remaining free spot
     for (let i = 0; i < board.length; i++) {
       if (!board[i]) return i;
     }
     return 0;
   }
 
-  
-
   return (
-    <Box textAlign="center" mt={10} bg="gray.100" color="black" minH="100vh" py={10}>
-      
-      <Text fontSize="2xl" mb={4}>{winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`}</Text>
-      
+    <Box textAlign="center" mt={10} bg={bgColor} color={color} minH="100vh" py={10}>
+      <Flex justifyContent="flex-end" p={4}>
+        <IconButton
+          aria-label="Toggle theme"
+          icon={<SwitchIcon />}
+          onClick={toggleColorMode}
+          size="lg"
+        />
+      </Flex>
+      <VStack spacing={8}>
+        <Heading fontSize="2xl" mb={4}>{winner === 'Draw' ? 'Game ended in a draw!' : (winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`)}</Heading>
         <Grid templateColumns="repeat(3, 1fr)" gap={2}>
           {Array.from({ length: 9 }).map((_, i) => (
             <GridItem key={i}>
-              {renderSquare(i)}
+              <Button onClick={() => handleClick(i)} size="lg" p={7} colorScheme="teal" isFullWidth>
+                {board[i]}
+              </Button>
             </GridItem>
           ))}
         </Grid>
