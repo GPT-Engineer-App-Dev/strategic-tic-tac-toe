@@ -46,7 +46,38 @@ const Index = () => {
   };
 
   function calculateBestMove(board) {
-    // Example of a simple AI logic to pick the first available spot
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+      [0, 4, 8], [2, 4, 6]             // Diagonals
+    ];
+
+    // Check if AI can win in the next move
+    for (let i = 0; i < winPatterns.length; i++) {
+      const [a, b, c] = winPatterns[i];
+      if (board[a] === 'O' && board[b] === 'O' && !board[c]) return c;
+      if (board[a] === 'O' && !board[b] && board[c] === 'O') return b;
+      if (!board[a] && board[b] === 'O' && board[c] === 'O') return a;
+    }
+
+    // Block opponent's winning move
+    for (let i = 0; i < winPatterns.length; i++) {
+      const [a, b, c] = winPatterns[i];
+      if (board[a] === 'X' && board[b] === 'X' && !board[c]) return c;
+      if (board[a] === 'X' && !board[b] && board[c] === 'X') return b;
+      if (!board[a] && board[b] === 'X' && board[c] === 'X') return a;
+    }
+
+    // Take the center if it's free
+    if (!board[4]) return 4;
+
+    // Take any corner if available
+    const corners = [0, 2, 6, 8];
+    for (let i = 0; i < corners.length; i++) {
+      if (!board[corners[i]]) return corners[i];
+    }
+
+    // Take any remaining free spot
     for (let i = 0; i < board.length; i++) {
       if (!board[i]) return i;
     }
