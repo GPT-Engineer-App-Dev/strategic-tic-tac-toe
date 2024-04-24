@@ -1,10 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Button, Grid, GridItem, Text } from '@chakra-ui/react';
 
 const Index = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
+  const [aiMode, setAiMode] = useState(false);
   const winner = calculateWinner(board);
+
+  useEffect(() => {
+    if (aiMode && !xIsNext) {
+      const bestMove = calculateBestMove(board);
+      const boardCopy = [...board];
+      boardCopy[bestMove] = 'O';
+      setBoard(boardCopy);
+      setXIsNext(true);
+    }
+  }, [board, xIsNext, aiMode]);
 
   const handleClick = (i) => {
     const boardCopy = [...board];
@@ -12,6 +23,12 @@ const Index = () => {
     boardCopy[i] = xIsNext ? 'X' : 'O';
     setBoard(boardCopy);
     setXIsNext(!xIsNext);
+    if (aiMode && !xIsNext) {
+      const bestMove = calculateBestMove(boardCopy);
+      boardCopy[bestMove] = 'O';
+      setBoard(boardCopy);
+      setXIsNext(true);
+    }
   };
 
   const renderSquare = (i) => (
@@ -25,6 +42,13 @@ const Index = () => {
     setXIsNext(true);
   };
 
+  function calculateBestMove(board) {
+    for (let i = 0; i < board.length; i++) {
+      if (!board[i]) return i; // Placeholder for AI logic
+    }
+    return 0;
+  }
+
   return (
     <Box textAlign="center" mt={10}>
       <Text fontSize="2xl" mb={4}>{winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`}</Text>
@@ -36,6 +60,9 @@ const Index = () => {
         ))}
       </Grid>
       <Button mt={4} colorScheme="blue" onClick={resetGame}>Reset Game</Button>
+      <Button mt={4} colorScheme="teal" onClick={() => setAiMode(!aiMode)}>
+        {aiMode ? 'Play Against Human' : 'Play Against AI'}
+      </Button>
     </Box>
   );
 };
