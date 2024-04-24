@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Button, Grid, GridItem, useColorMode, useColorModeValue, IconButton, Flex, VStack, Heading } from '@chakra-ui/react';
-import { FaSun, FaMoon } from 'react-icons/fa';
+import { Box, Button, Grid, GridItem } from '@chakra-ui/react';
 
 const Index = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -36,7 +35,7 @@ const Index = () => {
   };
 
   const renderSquare = (i) => (
-    <Button onClick={() => handleClick(i)} size="lg" p={7} colorScheme="teal" isFullWidth>
+    <Button onClick={() => handleClick(i)} size="lg" p={4} colorScheme="gray" isFullWidth>
       {board[i]}
     </Button>
   );
@@ -85,23 +84,13 @@ const Index = () => {
     return 0;
   }
 
-  const { colorMode, toggleColorMode } = useColorMode();
-  const SwitchIcon = colorMode === 'light' ? FaMoon : FaSun;
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const color = useColorModeValue('black', 'white');
+  
 
   return (
-    <Box textAlign="center" mt={10} bg={bgColor} color={color} minH="100vh" py={10}>
-      <Flex justifyContent="flex-end" p={4}>
-        <IconButton
-          aria-label="Toggle theme"
-          icon={<SwitchIcon />}
-          onClick={toggleColorMode}
-          size="lg"
-        />
-      </Flex>
-      <Heading fontSize="2xl" mb={4}>{winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`}</Heading>
-      <VStack spacing={8}>
+    <Box textAlign="center" mt={10} bg="gray.100" color="black" minH="100vh" py={10}>
+      
+      <Text fontSize="2xl" mb={4}>{winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`}</Text>
+      
         <Grid templateColumns="repeat(3, 1fr)" gap={2}>
           {Array.from({ length: 9 }).map((_, i) => (
             <GridItem key={i}>
