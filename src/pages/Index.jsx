@@ -8,14 +8,17 @@ const Index = () => {
   const winner = calculateWinner(board);
 
   useEffect(() => {
-    if (aiMode && !xIsNext) {
-      const bestMove = calculateBestMove(board);
-      const boardCopy = [...board];
-      boardCopy[bestMove] = 'O';
-      setBoard(boardCopy);
-      setXIsNext(true);
+    if (aiMode && !xIsNext && !winner) {
+      const timeout = setTimeout(() => {
+        const bestMove = calculateBestMove(board);
+        const boardCopy = [...board];
+        boardCopy[bestMove] = 'O';
+        setBoard(boardCopy);
+        setXIsNext(true);
+      }, 500); // Delay AI move to ensure state has updated
+      return () => clearTimeout(timeout);
     }
-  }, [board, xIsNext, aiMode]);
+  }, [board, xIsNext, aiMode, winner]);
 
   const handleClick = (i) => {
     const boardCopy = [...board];
@@ -43,8 +46,9 @@ const Index = () => {
   };
 
   function calculateBestMove(board) {
+    // Example of a simple AI logic to pick the first available spot
     for (let i = 0; i < board.length; i++) {
-      if (!board[i]) return i; // Placeholder for AI logic
+      if (!board[i]) return i;
     }
     return 0;
   }
