@@ -86,7 +86,7 @@ const Index = () => {
 
   return (
     <Box textAlign="center" mt={10}>
-      <Text fontSize="2xl" mb={4}>{winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`}</Text>
+      <Text fontSize="2xl" mb={4}>{winner === 'Draw' ? 'Game ended in a draw!' : (winner ? `Winner: ${winner}` : `Next player: ${xIsNext ? 'X' : 'O'}`)}</Text>
       <Grid templateColumns="repeat(3, 1fr)" gap={2}>
         {Array.from({ length: 9 }).map((_, i) => (
           <GridItem key={i}>
@@ -118,6 +118,11 @@ function calculateWinner(squares) {
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
     }
+  }
+  // Check for a draw
+  const isBoardFull = squares.every(square => square !== null);
+  if (isBoardFull) {
+      return 'Draw';
   }
   return null;
 }
